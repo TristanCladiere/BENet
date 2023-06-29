@@ -1,0 +1,139 @@
+AUTO_RESUME: True
+DATA_DIR: ''
+GPUS: (0,)
+LOG_DIR: log/center_emotions/
+OUTPUT_DIR: output/center_emotions/
+CUDNN:
+  BENCHMARK: True
+  DETERMINISTIC: False
+  ENABLED: True
+DATASET:
+  WITH_VAL: True
+  VAL_STEP: 1
+  SIGMA: 2
+  DATASET: mixed_center_emotion
+  DATASET_TEST: mixed
+  FLIP: 0.5
+  INPUT_SIZE: 512
+  OUTPUT_SIZE: [128, 256]
+  MAX_NUM_PEOPLE: 15
+  MAX_ROTATION: 5
+  MAX_SCALE: 1.5
+  SCALE_TYPE: 'short'
+  MAX_TRANSLATE: 40
+  MIN_SCALE: 0.75
+  NUM_CAT_EMOTIONS: 26
+  NUM_CONT_EMOTIONS: 3
+  ROOT: 'data'
+  TRAIN: 'EMOTIC_train_x1y1x2y2_tdpc'
+  VAL: 'EMOTIC_val_x1y1x2y2_tdpc'
+  TEST: 'EMOTIC_test_x1y1x2y2_tdpc'
+  PRE_TRANSFORMS: [["Det", "RandomMaskSubject", "ExtractSubject", "MaskAllSubjects"],
+                   [0.25, 0.25, 0.25, 0.25]]
+LOSS:
+  WITH_HM_LOSS: [True, True]
+  HM_LOSS_FACTOR: [1.0, 1.0]
+  WITH_HW_LOSS: [True, True]
+  HW_LOSS_FACTOR: [0.1, 0.1]
+  WITH_BU_CAT_LOSS: [True, True]
+  BU_CAT_LOSS_FACTOR: [1.0, 1.0]
+  WITH_BU_CONT_LOSS: [False, False]
+  BU_CONT_LOSS_FACTOR: [1.0, 1.0]
+  WITH_PC_CAT_LOSS: [True]
+  PC_CAT_LOSS_FACTOR: [1.0]
+  WITH_PC_CONT_LOSS: [False]
+  PC_CONT_LOSS_FACTOR: [1.0]
+  WITH_CONTEXT_CAT_LOSS: [True]
+  CONTEXT_CAT_LOSS_FACTOR: [1.0]
+  WITH_CONTEXT_CONT_LOSS: [False]
+  CONTEXT_CONT_LOSS_FACTOR: [1.0]
+  WITH_FUSION_CAT_LOSS: [False]
+  FUSION_CAT_LOSS_FACTOR: [1.0]
+  WITH_FUSION_CONT_LOSS: [False]
+  FUSION_CONT_LOSS_FACTOR: [1.0]
+MODEL:
+  HEAD_EXPANSION: 1
+  EXTRA:
+    FINAL_CONV_KERNEL: 1
+    PRETRAINED_LAYERS: ['*']
+    STEM_INPLANES: 64
+    STAGE2:
+      NUM_MODULES: 2
+      NUM_BRANCHES: 2
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 3
+      - 3
+      NUM_CHANNELS:
+      - 32
+      - 64
+      FUSE_METHOD: SUM
+    STAGE3:
+      NUM_MODULES: 2
+      NUM_BRANCHES: 3
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 3
+      - 3
+      - 3
+      NUM_CHANNELS:
+      - 32
+      - 64
+      - 128
+      FUSE_METHOD: SUM
+    STAGE4:
+      NUM_MODULES: 2
+      NUM_BRANCHES: 4
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 3
+      - 3
+      - 3
+      - 3
+      NUM_CHANNELS:
+      - 32
+      - 64
+      - 128
+      - 256
+      FUSE_METHOD: SUM
+      CONTEXT_LOSS: False
+      MSO: True
+    CONTEXT_BLOCK: True
+    DECONV:
+      NUM_DECONVS: 1
+      NUM_CHANNELS:
+      - 32
+      KERNEL_SIZE:
+      - 4
+      NUM_BASIC_BLOCKS: 3
+      CAT_OUTPUT:
+      - True
+  NUM_CAT_EMOTIONS: 26
+  NUM_CONT_EMOTIONS: 0
+  PRETRAINED: 'models/pytorch/pose_coco/pose_higher_hrnet_w32_512.pth'
+
+TEST:
+  FLIP_TEST: True
+  IMAGES_PER_GPU: 1
+  MODEL_FILE: ''
+  DETECTION_THRESHOLD: 0.1
+  PROJECT2IMAGE: True
+  NMS_KERNEL: 5
+  NMS_PADDING: 2
+TRAIN:
+  BEGIN_EPOCH: 0
+  CHECKPOINT: ''
+  END_EPOCH: 250
+  GAMMA1: 0.99
+  GAMMA2: 0.0
+  IMAGES_PER_GPU: 24
+  LR: 0.001
+  LR_FACTOR: 0.1
+  LR_STEP: []
+  MOMENTUM: 0.9
+  NESTEROV: False
+  OPTIMIZER: adam
+  RESUME: False
+  SHUFFLE: True
+  WD: 0.0001
+WORKERS: 4
