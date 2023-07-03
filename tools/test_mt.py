@@ -72,7 +72,7 @@ def get_bu_centers(cfg, anno, resized, trans):
 
         for j, obj in enumerate(anno):
             x1, y1, x2, y2 = obj['bbox']
-            xc, yc = (x1+x2)/2, (y1+y2)/2
+            xc, yc = float((x1+x2)/2), float((y1+y2)/2)
             xc, yc = affine_transform([xc, yc], trans)
             xc, yc = affine_transform([xc, yc], trans2)
             centers[i].append((int(xc), int(yc)))
